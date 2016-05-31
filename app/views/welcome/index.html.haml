@@ -1,0 +1,13 @@
+.title
+  %h1 News channel
+  %ol
+    - @data_sources.each do |data_source|
+      %li= data_source.name
+  %hr
+- @news.each do |one_news|
+  .item
+    = link_to "#{one_news.id} # #{one_news.title} # #{one_news.data_source.name}", one_news.link, class: "item-title"
+    %hr
+    .item-description= one_news.description.html_safe
+    .item-text= one_news.text
+    %hr
