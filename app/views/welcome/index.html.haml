@@ -1,8 +1,7 @@
 .title
   %h1= link_to "News channel", root_path
   %hr
-
-  .item-text= link_to @base_news.title, "##{@base_news.id}"
+  .item-text= link_to @base_news.title, @base_news.link
   %ol
     - @closest_to_it.each do |item|
       %li= link_to item[0].title, "##{item[0].id}"
@@ -20,5 +19,5 @@
     = link_to "find closest to me", find_closest_news_path(one_news.id)
     %hr
     .item-description= one_news.description.html_safe
-    .item-text= one_news.text
+    .item-text= one_news.text.html_safe
     %hr

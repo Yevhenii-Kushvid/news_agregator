@@ -1,26 +1,34 @@
 class WelcomeController < ApplicationController
+  before_action :news_init, only: [:index, :find_closest]
+
 
   def index
-    @news = News.where.not(text: nil)
-    @data_sources = DataSource.all
-
     if params[:news_id]
-      news_id = params[:news_id]
+      @news_id = params[:news_id]
     else
-      news_id = Random.new.rand(News.count - 1)
+      ids = @news.pluck(:id)
+      @news_id = Random.new.rand(ids.count - 1)
+      while @news.find(ids[@news_id]).nil? do
+        @news_id = Random.new.rand(ids.count - 1)
+      end
     end
 
-    find_closest(news_id)
+    find_closest(@news_id)
   end
 
   def find_closest(news_id = params[:id])
     require File.expand_path("../../../app/entities/analyser.rb", __FILE__)
 
-    @news = News.where.not(text: nil)
-    @data_sources = DataSource.all
-
-    @base_news = @news.find(news_id)
-    @base_news = news_id = Random.new.rand(1) unless @base_news
+    begin
+      @base_news = @news.find(news_id)
+    rescue => error
+      ids = @news.pluck(:id)
+      news_id = Random.new.rand(ids.count - 1)
+      while @news.find(ids[news_id]).nil? do
+        news_id = Random.new.rand(ids.count - 1)
+      end
+      @base_news = @news.find(news_id)
+    end    
     # Analyser.new(@news)
 
     @closest_to_it = []
@@ -40,9 +48,14 @@ class WelcomeController < ApplicationController
 
   private
 
+  def news_init
+    @news = News.where.not(text: nil)
+    @data_sources = DataSource.all
+  end
+
   def solv_similarity(base_news, solving_news)
-    base_news_words     =  base_news.text.split(' ')
-    solving_news_words  =  solving_news.text.split(' ')
+    base_news_words     =  base_news.text.split(' ') + base_news.description.split(' ') + base_news.title.split(' ')
+    solving_news_words  =  solving_news.text.split(' ') + solving_news.description.split(' ') + solving_news.title.split(' ')
 
     base_news_abbrs     =  base_news_words.select{|word| word.index(/[A-Z]/) }
     solving_news_abbrs  =  solving_news_words.select{|word| word.index(/[A-Z]/) }
