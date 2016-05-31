@@ -52,7 +52,7 @@ class Collector
     if collector
       full_text = collector.load_full_text_from(one_news)
     else
-      full_text = "LifeHaker"
+      full_text = nil
     end
 
     # Daily Express - ".text-description" внутри которых "p"
