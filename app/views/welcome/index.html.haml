@@ -1,14 +1,11 @@
 .title
   %h1= link_to "News channel", root_path
-  %ol
-    - @data_sources.each do |data_source|
-      %li= data_source.name
   %hr
 
   .item-text= link_to @base_news.title, "##{@base_news.id}"
   %ol
     - @closest_to_it.each do |item|
-      %li= link_to item[0].title, item[0].link
+      %li= link_to item[0].title, "##{item[0].id}"
       %hr
       = item[1]
       %hr
@@ -16,7 +13,7 @@
       %hr
       %hr
   %hr
-- @news.each do |one_news|
+- @closest_to_it.each do |one_news, _|
   .item{:id => one_news.id}
     = link_to "#{one_news.id} # #{one_news.title} # #{one_news.data_source.name}", one_news.link, class: "item-title"
     %hr

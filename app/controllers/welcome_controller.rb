@@ -4,8 +4,11 @@ class WelcomeController < ApplicationController
     @news = News.where.not(text: nil)
     @data_sources = DataSource.all
 
-    news_id = params[:news_id]
-    news_id = Random.new.rand(News.count - 1) unless params[:news_id]
+    if params[:news_id]
+      news_id = params[:news_id]
+    else
+      news_id = Random.new.rand(News.count - 1)
+    end
 
     find_closest(news_id)
   end
@@ -17,16 +20,14 @@ class WelcomeController < ApplicationController
     @data_sources = DataSource.all
 
     @base_news = @news.find(news_id)
+    @base_news = news_id = Random.new.rand(1) unless @base_news
     # Analyser.new(@news)
 
     @closest_to_it = []
     @news.each{ |one_news|
-
       difference = solv_similarity(@base_news, one_news)
-
       @closest_to_it << [one_news, difference]
     }
-
     @closest_to_it.sort! { |x, y| x[1] <=> y[1] }
     @closest_to_it = @closest_to_it[1..5]
 
