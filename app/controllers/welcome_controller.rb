@@ -19,16 +19,17 @@ class WelcomeController < ApplicationController
   def find_closest(news_id = params[:id])
     require File.expand_path("../../../app/entities/analyser.rb", __FILE__)
 
+    @news_id = news_id
     begin
-      @base_news = @news.find(news_id)
+      @base_news = @news.find(@news_id)
     rescue => error
       ids = @news.pluck(:id)
-      news_id = Random.new.rand(ids.count - 1)
-      while @news.find(ids[news_id]).nil? do
-        news_id = Random.new.rand(ids.count - 1)
+      @news_id = Random.new.rand(ids.count - 1)
+      while @news.find(ids[@news_id]).nil? do
+        @news_id = Random.new.rand(ids.count - 1)
       end
-      @base_news = @news.find(news_id)
-    end    
+      @base_news = @news.find(ids[@news_id])
+    end
     # Analyser.new(@news)
 
     @closest_to_it = []
