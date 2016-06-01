@@ -30,7 +30,6 @@ class WelcomeController < ApplicationController
       end
       @base_news = @news.find(ids[@news_id])
     end
-    # Analyser.new(@news)
 
     @closest_to_it = []
     @news.each{ |one_news|
